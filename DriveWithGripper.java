@@ -78,7 +78,7 @@ public class DriveWithGripper extends LinearOpMode
             else
                 contPower = 0.0;
 
-            // set the servo position values as we have computed them.
+            // set the servo position/power values as we have computed them.
             armServo.setPosition(Range.clip(armPosition, Servo.MIN_POSITION, Servo.MAX_POSITION));
             gripServo.setPosition(Range.clip(gripPosition, Servo.MIN_POSITION, Servo.MAX_POSITION));
             contServo.setPower(contPower);
