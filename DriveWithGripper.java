@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Drive Gripper", group="Exercises")
@@ -17,8 +18,9 @@ public class DriveWithGripper extends LinearOpMode
 {
     DcMotor leftMotor, rightMotor;
     Servo   armServo, gripServo;
+    CRServo contServo;
     float   leftY, rightY;
-    double  armPosition, gripPosition;
+    double  armPosition, gripPosition, contPower;
 
     // called when init button is  pressed.
     @Override
@@ -30,7 +32,8 @@ public class DriveWithGripper extends LinearOpMode
 
         armServo = hardwareMap.servo.get("arm_servo");
         gripServo = hardwareMap.servo.get("grip_servo");
-
+        contServo = hardwareMap.crservo.get("cont_servo");
+       
         telemetry.addData("Mode", "waiting");
         telemetry.update();
 
@@ -67,10 +70,19 @@ public class DriveWithGripper extends LinearOpMode
             // close the gripper on Y button if not already at the closed position.
             if (gamepad1.y && gripPosition > Servo.MIN_POSITION) gripPosition = gripPosition - .01;
 
+            // Set continuous servo power level and direction.
+            if (gamepad1.dpad_left)
+                contPower = .20;
+            else if (gamepad1.dpad_right)
+                contPower = -.20;
+            else
+                contPower = 0.0;
+
             // set the servo position values as we have computed them.
             armServo.setPosition(Range.clip(armPosition, Servo.MIN_POSITION, Servo.MAX_POSITION));
             gripServo.setPosition(Range.clip(gripPosition, Servo.MIN_POSITION, Servo.MAX_POSITION));
-
+            contServo.setPower(contPower);
+           
             telemetry.addData("arm servo", "position=" + armPosition + "  actual=" + armServo.getPosition());
             telemetry.addData("grip servo", "position=" + gripPosition + "    actual=" + gripServo.getPosition());
 
