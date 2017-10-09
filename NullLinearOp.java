@@ -15,6 +15,10 @@ import java.util.Date;
 public class NullLinearOp extends LinearOpMode
 {
   private String startDate, initDate;
+  
+  // Create an instance of the built-in ElapsedTime object from the FTC SDK.
+  // It will return the current total run time of the opMode when called.
+  
   private ElapsedTime runtime = new ElapsedTime();
 
   // There is only one method for us to override with our own code.
@@ -34,7 +38,7 @@ public class NullLinearOp extends LinearOpMode
     // Start button pressed, off we go.
 
     startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
-    runtime.reset();
+    runtime.reset();  // Start counting run time from now.
 
     // Here we implement the loop our code needs to run in for the duration of
     // our OpModes execution. We can tell when to stop by monitoring the base
