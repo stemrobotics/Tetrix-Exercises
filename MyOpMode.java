@@ -6,6 +6,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.util.Date;
 public class MyOpMode extends LinearOpMode 
 {
   private String startDate;
+  private ElapsedTime runtime = new ElapsedTime();
   
   // Create a string containing the current date and time.
   
