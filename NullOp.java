@@ -58,7 +58,7 @@ public class NullOp extends OpMode
   @Override
   public void loop() 
   {
-    telemetry.addData("1 Start", "NullOp started at " + startDate);
-    telemetry.addData("2 Status", "running for " + runtime.toString());
+    telemetry.addData("Start", "NullOp started at " + startDate);
+    telemetry.addData("Status", "running for " + runtime.toString());
   }
 }
