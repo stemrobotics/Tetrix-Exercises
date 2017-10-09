@@ -24,7 +24,7 @@ public class NullLinearOp extends LinearOpMode
   {
     initDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
 
-    telemetry.addData("0 init", "NullLinearOp initialized at " + initDate);
+    telemetry.addData("init", "NullLinearOp initialized at " + initDate);
     telemetry.update();
 
     // After we are done initializing our code, we wait for Start button.
@@ -42,8 +42,8 @@ public class NullLinearOp extends LinearOpMode
 
     while (opModeIsActive())
     {
-      telemetry.addData("1 Start", "NullLinearOp started at " + startDate);
-      telemetry.addData("2 Status", "running for " + runtime.toString());
+      telemetry.addData("Start", "NullLinearOp started at " + startDate);
+      telemetry.addData("Status", "running for " + runtime.toString());
       telemetry.update();
 
       idle();
