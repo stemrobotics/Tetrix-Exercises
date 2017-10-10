@@ -36,7 +36,8 @@ public class TimingDemo2 extends LinearOpMode
                 aButtonPressed = false;
 
             if (gamepad1.b)
-                if(!bButtonPressed) {
+                if(!bButtonPressed) 
+                {
                     bButton = !bButton;
                     bButtonPressed = true;
                 }
