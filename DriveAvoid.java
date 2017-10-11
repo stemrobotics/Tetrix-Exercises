@@ -66,7 +66,8 @@ public class DriveAvoid extends LinearOpMode
 
         gyro.resetZAxisIntegrator();
 
-        while (opModeIsActive()) {
+        while (opModeIsActive()) 
+        {
             telemetry.addData("gyro heading", gyro.getHeading());
             telemetry.update();
 
