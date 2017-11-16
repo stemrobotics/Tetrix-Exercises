@@ -4,7 +4,7 @@
 // REV Hub's built in IMU in place of a gyro. Also uses gamepad1 buttons to
 // simulate touch sensor press and supports left as well as right turn.
 //
-// Also uses PID controller to drive in a straight line when not 
+// Also uses PID controller to drive in a straight line when not
 // avoiding an obstacle.
 //
 // Use PID controller to manage motor power during 90 degree turn to reduce
@@ -70,7 +70,7 @@ public class DriveAvoidPid extends LinearOpMode
 
         // Set PID proportional value to produce non-zero correction value when robot veers off
         // straight line. P value controls how sensitive the correction is.
-        pidDrive = new PIDController(.10, 0, 0);
+        pidDrive = new PIDController(.05, 0, 0);
 
         telemetry.addData("Mode", "calibrating...");
         telemetry.update();
@@ -97,7 +97,7 @@ public class DriveAvoidPid extends LinearOpMode
 
         // Set up parameters for driving in a straight line.
         pidDrive.setSetpoint(0);
-        pidDrive.setOutputRange(-power, power);
+        pidDrive.setOutputRange(0, power);
         pidDrive.setInputRange(-90, 90);
         pidDrive.enable();
 
@@ -162,7 +162,7 @@ public class DriveAvoidPid extends LinearOpMode
 
     /**
      * Get current cumulative angle rotation from last reset.
-     * @return Angle in degrees. + = left, - = right.
+     * @return Angle in degrees. + = left, - = right from zero point.
      */
     private double getAngle()
     {
@@ -197,20 +197,20 @@ public class DriveAvoidPid extends LinearOpMode
         resetAngle();
 
         // start pid controller. PID controller will monitor the turn angle with respect to the
-        // target angle and reduce power as we approach the target angle. This is to prevent
-        // the robots momentum from overshooting the turn after we turn off the power. The PID
-        // controller reports onTarget() = true when the difference between turn angle and target
-        // angle is within 3% of target (tolerance). This helps prevent overshoot.
+        // target angle and reduce power as we approach the target angle with a minimum of 20%.
+        // This is to prevent the robots momentum from overshooting the turn after we turn off the
+        // power. The PID controller reports onTarget() = true when the difference between turn
+        // angle and target angle is within 2% of target (tolerance). This helps prevent overshoot.
         // The minimum power is determined by testing and must enough to prevent motor stall and
         // complete the turn. Note: if the gap between the starting power and the stall (minimum)
         // power is small, overshoot may still occur. Overshoot is dependant on the motor and
         // gearing configuration, starting power, weight of the robot and the on target tolerance.
 
         pidRotate.reset();
-        pidRotate.setSetpoint(Math.abs(degrees));
+        pidRotate.setSetpoint(degrees);
         pidRotate.setInputRange(0, 90);
-        pidRotate.setOutputRange(.25, power);
-        pidRotate.setTolerance(3);
+        pidRotate.setOutputRange(.20, power);
+        pidRotate.setTolerance(2);
         pidRotate.enable();
 
         // getAngle() returns + when rotating counter clockwise (left) and - when rotating
@@ -230,15 +230,15 @@ public class DriveAvoidPid extends LinearOpMode
 
             do
             {
-                power = pidRotate.performPID(Math.abs(getAngle()));
-                leftMotor.setPower(-power);
-                rightMotor.setPower(power);
+                power = pidRotate.performPID(getAngle()); // power will be - on right turn.
+                leftMotor.setPower(power);
+                rightMotor.setPower(-power);
             } while (opModeIsActive() && !pidRotate.onTarget());
         }
         else    // left turn.
             do
             {
-                power = pidRotate.performPID(Math.abs(getAngle()));
+                power = pidRotate.performPID(getAngle()); // power will be + on left turn.
                 leftMotor.setPower(power);
                 rightMotor.setPower(-power);
             } while (opModeIsActive() && !pidRotate.onTarget());
@@ -254,23 +254,23 @@ public class DriveAvoidPid extends LinearOpMode
         resetAngle();
     }
 
-    // PID controller courtesy of Peter Tischler.
+    // PID controller courtesy of Peter Tischler, with modifications.
 
     public class PIDController
     {
-        private double m_P;			// factor for "proportional" control
-        private double m_I;			// factor for "integral" control
-        private double m_D;			// factor for "derivative" control
-        private double m_input;             // sensor input for pid controller
+        private double m_P;			            // factor for "proportional" control
+        private double m_I;			            // factor for "integral" control
+        private double m_D;			            // factor for "derivative" control
+        private double m_input;                 // sensor input for pid controller
         private double m_maximumOutput = 1.0;	// |maximum output|
         private double m_minimumOutput = -1.0;	// |minimum output|
         private double m_maximumInput = 0.0;	// maximum input - limit setpoint to this
         private double m_minimumInput = 0.0;	// minimum input - limit setpoint to this
         private boolean m_continuous = false;	// do the endpoints wrap around? eg. Absolute encoder
         private boolean m_enabled = false; 		//is the pid controller enabled
-        private double m_prevError = 0.0;	// the prior sensor input (used to compute velocity)
-        private double m_totalError = 0.0;  //the sum of the errors for use in the integral calc
-        private double m_tolerance = 0.05;	//the percetage error that is considered on target
+        private double m_prevError = 0.0;	    // the prior sensor input (used to compute velocity)
+        private double m_totalError = 0.0;      //the sum of the errors for use in the integral calc
+        private double m_tolerance = 0.05;	    //the percentage error that is considered on target
         private double m_setpoint = 0.0;
         private double m_error = 0.0;
         private double m_result = 0.0;
@@ -295,6 +295,8 @@ public class DriveAvoidPid extends LinearOpMode
          */
         private void calculate()
         {
+            int     sign = 1;
+
             // If enabled then proceed into controller calculations
             if (m_enabled)
             {
@@ -307,40 +309,33 @@ public class DriveAvoidPid extends LinearOpMode
                     if (Math.abs(m_error) > (m_maximumInput - m_minimumInput) / 2)
                     {
                         if (m_error > 0)
-                        {
                             m_error = m_error - m_maximumInput + m_minimumInput;
-                        }
                         else
-                        {
                             m_error = m_error + m_maximumInput - m_minimumInput;
-                        }
                     }
                 }
 
                 // Integrate the errors as long as the upcoming integrator does
                 // not exceed the minimum and maximum output thresholds.
 
-                if (((m_totalError + m_error) * m_I < m_maximumOutput) &&
-                        ((m_totalError + m_error) * m_I > m_minimumOutput))
-                {
+                if ((Math.abs(m_totalError + m_error) * m_I < m_maximumOutput) &&
+                        (Math.abs(m_totalError + m_error) * m_I > m_minimumOutput))
                     m_totalError += m_error;
-                }
 
                 // Perform the primary PID calculation
-                m_result = (m_P * m_error + m_I * m_totalError + m_D * (m_error - m_prevError));
+                m_result = m_P * m_error + m_I * m_totalError + m_D * (m_error - m_prevError);
 
-                // Set the current error to the previous error for the next cycle
+                // Set the current error to the previous error for the next cycle.
                 m_prevError = m_error;
 
-                // Make sure the final result is within bounds
-                if (m_result > m_maximumOutput)
-                {
-                    m_result = m_maximumOutput;
-                }
-                else if (m_result < m_minimumOutput)
-                {
-                    m_result = m_minimumOutput;
-                }
+                if (m_result < 0) sign = -1;    // Record sign of result.
+
+                // Make sure the final result is within bounds. If we constrain the result, we make
+                // sure the sign of the constrained result matches the original result sign.
+                if (Math.abs(m_result) > m_maximumOutput)
+                    m_result = m_maximumOutput * sign;
+                else if (Math.abs(m_result) < m_minimumOutput)
+                    m_result = m_minimumOutput * sign;
             }
         }
 
@@ -429,26 +424,26 @@ public class DriveAvoidPid extends LinearOpMode
         /**
          * Sets the maximum and minimum values expected from the input.
          *
-         * @param minimumInput the minimum value expected from the input
-         * @param maximumInput the maximum value expected from the output
+         * @param minimumInput the minimum value expected from the input, always positive
+         * @param maximumInput the maximum value expected from the output, always positive
          */
         public void setInputRange(double minimumInput, double maximumInput)
         {
-            m_minimumInput = minimumInput;
-            m_maximumInput = maximumInput;
+            m_minimumInput = Math.abs(minimumInput);
+            m_maximumInput = Math.abs(maximumInput);
             setSetpoint(m_setpoint);
         }
 
         /**
          * Sets the minimum and maximum values to write.
          *
-         * @param minimumOutput the minimum value to write to the output
-         * @param maximumOutput the maximum value to write to the output
+         * @param minimumOutput the minimum value to write to the output, always positive
+         * @param maximumOutput the maximum value to write to the output, always positive
          */
         public void setOutputRange(double minimumOutput, double maximumOutput)
         {
-            m_minimumOutput = minimumOutput;
-            m_maximumOutput = maximumOutput;
+            m_minimumOutput = Math.abs(minimumOutput);
+            m_maximumOutput = Math.abs(maximumOutput);
         }
 
         /**
@@ -457,22 +452,21 @@ public class DriveAvoidPid extends LinearOpMode
          */
         public void setSetpoint(double setpoint)
         {
+            int     sign = 1;
+
             if (m_maximumInput > m_minimumInput)
             {
-                if (setpoint > m_maximumInput)
-                {
-                    m_setpoint = m_maximumInput;
-                } else if (setpoint < m_minimumInput)
-                {
-                    m_setpoint = m_minimumInput;
-                } else
-                    {
+                if (setpoint < 0) sign = -1;
+
+                if (Math.abs(setpoint) > m_maximumInput)
+                    m_setpoint = m_maximumInput * sign;
+                else if (Math.abs(setpoint) < m_minimumInput)
+                    m_setpoint = m_minimumInput * sign;
+                else
                     m_setpoint = setpoint;
-                }
-            } else
-                {
-                m_setpoint = setpoint;
             }
+            else
+                m_setpoint = setpoint;
         }
 
         /**
@@ -508,10 +502,7 @@ public class DriveAvoidPid extends LinearOpMode
          */
         public boolean onTarget()
         {
-            Logging.log("ont error=%f  tolerance=%f", m_error, m_tolerance / 100 *
-                    (m_maximumInput - m_minimumInput));
-            return (Math.abs(m_error) < m_tolerance / 100 *
-                    (m_maximumInput - m_minimumInput));
+            return (Math.abs(m_error) < Math.abs(m_tolerance / 100 * (m_maximumInput - m_minimumInput)));
         }
 
         /**
@@ -539,8 +530,27 @@ public class DriveAvoidPid extends LinearOpMode
             m_result = 0;
         }
 
-        public void setInput(double input){
-            m_input = input;
+        /**
+         * Set the input value to be used by the next call to performPID().
+         * @param input Input value to the PID calculation.
+         */
+        public void setInput(double input)
+        {
+            int     sign = 1;
+
+            if (m_maximumInput > m_minimumInput)
+            {
+                if (input < 0) sign = -1;
+
+                if (Math.abs(input) > m_maximumInput)
+                    m_input = m_maximumInput * sign;
+                else if (Math.abs(input) < m_minimumInput)
+                    m_input = m_minimumInput * sign;
+                else
+                    m_input = input;
+            }
+            else
+                m_input = input;
         }
     }
 }
