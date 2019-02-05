@@ -33,7 +33,7 @@ public class DriveAvoid extends LinearOpMode
         rightMotor = hardwareMap.dcMotor.get("right_motor");
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        // get a reference to our MR Touch sensor.
+        // get a reference to the touch sensor.
         touch = hardwareMap.touchSensor.get("touch_sensor");
 
         gyro = hardwareMap.gyroSensor.get("gyro");
@@ -172,12 +172,27 @@ public class DriveAvoid extends LinearOpMode
         if (degrees < 0)
         {
             // On right turn we have to get off zero first.
-            while (opModeIsActive() && gyro.getHeading() == 0) {idle();}
+            while (opModeIsActive() && gyro.getHeading() == 0) 
+            {
+                telemetry.addData("gyro heading", gyro.getHeading());
+                telemetry.update();
+                idle();
+            }
 
-            while (opModeIsActive() && gyro.getHeading() > targetAngle) {idle();}
+            while (opModeIsActive() && gyro.getHeading() > targetAngle) 
+            {
+                telemetry.addData("gyro heading", gyro.getHeading());
+                telemetry.update();
+                idle();
+            }
         }
         else
-            while (opModeIsActive() && gyro.getHeading() < targetAngle) {idle();}
+            while (opModeIsActive() && gyro.getHeading() < targetAngle) 
+            {
+                telemetry.addData("gyro heading", gyro.getHeading());
+                telemetry.update();
+                idle();
+            }
 
         // turn the motors off.
         rightMotor.setPower(0);
