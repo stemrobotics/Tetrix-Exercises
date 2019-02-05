@@ -1,7 +1,7 @@
 // Simple autonomous program that drives bot forward until end of period
 // or touch sensor is hit. If touched, backs up a bit and turns 90 degrees
 // right and keeps going. Demonstrates obstacle avoidance and use of a MR
-// gyro sensor with MR control hardware. Also uses gamepad1 buttons to
+// gyro sensor along with a touch sensor. Also uses gamepad1 buttons to
 // simulate touch sensor press and supports left as well as right turn.
 //
 // Also uses gyro to drive in a straight line when not avoiding an obstacle.
@@ -22,7 +22,7 @@ public class DriveAvoid extends LinearOpMode
     DcMotor                 rightMotor;
     TouchSensor             touch;
     GyroSensor              gyro;
-    double                  power = .20, correction;
+    double                  power = .25, correction;
     boolean                 aButton, bButton, touched;
 
     // called when init button is  pressed.
@@ -76,7 +76,7 @@ public class DriveAvoid extends LinearOpMode
 
             // set power levels.
             leftMotor.setPower(-power + correction);
-            rightMotor.setPower(-power);
+            rightMotor.setPower(-power - correction);
 
             // We record the sensor values because we will test them in more than
             // one place with time passing between those places. See the lesson on
