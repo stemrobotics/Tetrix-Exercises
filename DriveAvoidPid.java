@@ -16,7 +16,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -27,9 +27,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //@Disabled
 public class DriveAvoidPid extends LinearOpMode
 {
-    DcMotor                 leftMotor;
-    DcMotor                 rightMotor;
-    DigitalChannel          touch;
+    DcMotor                 leftMotor, rightMotor;
+    TouchSensor             touch;
     BNO055IMU               imu;
     Orientation             lastAngles = new Orientation();
     double                  globalAngle, power = .30, correction;
@@ -115,7 +114,7 @@ public class DriveAvoidPid extends LinearOpMode
 
             // set power levels.
             leftMotor.setPower(-power + correction);
-            rightMotor.setPower(-power);
+            rightMotor.setPower(-power - correction);
 
             // We record the sensor values because we will test them in more than
             // one place with time passing between those places. See the lesson on
@@ -123,9 +122,9 @@ public class DriveAvoidPid extends LinearOpMode
 
             aButton = gamepad1.a;
             bButton = gamepad1.b;
-            touched = touch.getState();
+            touched = touch.isPressed();
 
-            if (!touched || aButton || bButton)
+            if (touched || aButton || bButton)
             {
                 // backup.
                 leftMotor.setPower(power);
@@ -138,7 +137,7 @@ public class DriveAvoidPid extends LinearOpMode
                 rightMotor.setPower(0);
 
                 // turn 90 degrees right.
-                if (!touched || aButton) rotate(-90, power);
+                if (touched || aButton) rotate(-90, power);
 
                 // turn 90 degrees left.
                 if (bButton) rotate(90, power);
