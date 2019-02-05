@@ -22,7 +22,7 @@ public class DriveAvoid extends LinearOpMode
     DcMotor                 rightMotor;
     TouchSensor             touch;
     GyroSensor              gyro;
-    double                  power = .25, correction;
+    double                  power = .30, correction;
     boolean                 aButton, bButton, touched;
 
     // called when init button is  pressed.
