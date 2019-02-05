@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 
 /**
  * Custom logging class. Configures log system (not console) to write to a disk file.
+ * Customize the setup() method for the controller phone you are using.
  */
 public class Logging
 {
@@ -50,7 +51,8 @@ public class Logging
     // The log file can be copied from the ZTE robot controller to your PC for review by using the
     // following AndroidDeBugger command in the Android Studio Terminal window:
     //
-    // adb pull //storage/sdcard0/Logging.txt c:\temp\robot_logging.txt
+    // ZTE: adb pull //storage/sdcard0/Logging.txt c:\temp\robot_logging.txt
+    // MOTO G: adb pull sdcard/Logging.txt c:\temp\robot_logging.txt
 
     /**
      * Indicates if logging is turned on or off.
@@ -107,11 +109,13 @@ public class Logging
         // Set our formatter on the console log handler.
         if (handlers[0] instanceof ConsoleHandler) handlers[0].setFormatter(logFormatter);
 
-        // Now create a handler to log to a file on ZTE "disk".
+        // Now create a handler to log to a file on controller phone "disk".
 
-        //if (true) throw new IOException("Test Exception");
-
+        // For ZTE:
         fileTxt = new FileHandler("storage/sdcard0/Logging.txt", 0 , 1);
+
+        // For MOTO G:
+        fileTxt = new FileHandler("sdcard/Logging.txt", 0 , 1);
 
         fileTxt.setFormatter(logFormatter);
 
