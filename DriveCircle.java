@@ -38,7 +38,7 @@ public class DriveCircle extends LinearOpMode
         // set power levels 75% left and 10% right to drive in an arc to the right.
 
         leftMotor.setPower(-0.75);
-        rightMotor.setPower(-0.10);
+        rightMotor.setPower(-0.20);
 
         sleep(5000);            // drive 5 seconds to make a circle.
 
