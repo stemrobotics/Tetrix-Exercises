@@ -112,7 +112,7 @@ public class Logging
         // Now create a handler to log to a file on controller phone "disk".
 
         // For ZTE:
-        fileTxt = new FileHandler("storage/sdcard0/Logging.txt", 0 , 1);
+        //fileTxt = new FileHandler("storage/sdcard0/Logging.txt", 0 , 1);
 
         // For MOTO G:
         fileTxt = new FileHandler("sdcard/Logging.txt", 0 , 1);
@@ -151,7 +151,7 @@ public class Logging
 
         private String formatDate(long milliseconds)
         {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss:S");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss:SSS");
             dateFormat.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
             Date resultDate = new Date(milliseconds);
             return dateFormat.format(resultDate);
