@@ -35,6 +35,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  *  dots is a code indicating left, center and right. Vuforia is used to locate the image in the
  *  camera field of view and extract the code returning that to your program. FIRST included a
  *  custom enum class to display the code (also called an instance id) as text.
+ *
+ * VuMarks are defined by two data files created by the Vuforia Target Manager. In our case, those
+ * files are provided by FIRST. The files are embedded in the robot controller program by putting
+ * them in the assests directory of FtcRobotController section of the project.
  */
 
 @Autonomous(name="VuMark Id", group ="Exercises")
@@ -97,7 +101,7 @@ public class VuMarkIdentification extends LinearOpMode
         /** Constructor.
          * Create an instance of the class.
          * @param hMap HardwareMap object.
-         * @param assetName Name of the asset file containing the VuMark definition.
+         * @param assetName Name of the asset files containing the VuMark definition.
          * @param includeViewer True to display camera viewer on RC phone.
          * @param camera Front or Back camera choice.
          */
@@ -134,7 +138,7 @@ public class VuMarkIdentification extends LinearOpMode
             vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
             /*
-             * Load the data set containing the VuMark. This code supports 1 VuMark.
+             * Load the data files containing the VuMark definition. This code supports 1 VuMark.
              */
             trackables = vuforia.loadTrackablesFromAsset(assetName);
             template = trackables.get(0);
