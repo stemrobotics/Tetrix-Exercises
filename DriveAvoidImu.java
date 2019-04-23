@@ -37,9 +37,9 @@ public class DriveAvoidImu extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
         leftMotor = hardwareMap.dcMotor.get("left_motor");
-
         rightMotor = hardwareMap.dcMotor.get("right_motor");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -96,8 +96,8 @@ public class DriveAvoidImu extends LinearOpMode
             telemetry.addData("3 correction", correction);
             telemetry.update();
 
-            leftMotor.setPower(-power + correction);
-            rightMotor.setPower(-power - correction);
+            leftMotor.setPower(power + correction);
+            rightMotor.setPower(power - correction);
 
             // We record the sensor values because we will test them in more than
             // one place with time passing between those places. See the lesson on
@@ -208,13 +208,13 @@ public class DriveAvoidImu extends LinearOpMode
 
         if (degrees < 0)
         {   // turn right.
-            leftPower = -power;
-            rightPower = power;
+            leftPower = power;
+            rightPower = -power;
         }
         else if (degrees > 0)
         {   // turn left.
-            leftPower = power;
-            rightPower = -power;
+            leftPower = -power;
+            rightPower = power;
         }
         else return;
 
