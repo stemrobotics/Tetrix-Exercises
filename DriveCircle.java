@@ -21,7 +21,8 @@ public class DriveCircle extends LinearOpMode
     {
         leftMotor = hardwareMap.dcMotor.get("left_motor");
         rightMotor = hardwareMap.dcMotor.get("right_motor");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Mode", "waiting");
         telemetry.update();
@@ -37,8 +38,8 @@ public class DriveCircle extends LinearOpMode
 
         // set power levels 75% left and 10% right to drive in an arc to the right.
 
-        leftMotor.setPower(-0.75);
-        rightMotor.setPower(-0.20);
+        leftMotor.setPower(0.75);
+        rightMotor.setPower(0.20);
 
         sleep(5000);            // drive 5 seconds to make a circle.
 
