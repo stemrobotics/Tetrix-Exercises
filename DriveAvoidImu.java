@@ -45,7 +45,7 @@ public class DriveAvoidImu extends LinearOpMode
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // get a reference to touch sensor.
-        touch = hardwareMap.digitalChannel.get("touch_sensor");
+        touch = hardwareMap.touchSensor.get("touch_sensor");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -96,8 +96,8 @@ public class DriveAvoidImu extends LinearOpMode
             telemetry.addData("3 correction", correction);
             telemetry.update();
 
-            leftMotor.setPower(power + correction);
-            rightMotor.setPower(power - correction);
+            leftMotor.setPower(power - correction);
+            rightMotor.setPower(power + correction);
 
             // We record the sensor values because we will test them in more than
             // one place with time passing between those places. See the lesson on
