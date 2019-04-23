@@ -25,7 +25,8 @@ public class DriveForward extends LinearOpMode
     {
         leftMotor = hardwareMap.dcMotor.get("left_motor");
         rightMotor = hardwareMap.dcMotor.get("right_motor");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Mode", "waiting");
         telemetry.update();
@@ -39,8 +40,8 @@ public class DriveForward extends LinearOpMode
  
         // set both motors to 25% power.
 
-        leftMotor.setPower(-0.25);
-        rightMotor.setPower(-0.25);
+        leftMotor.setPower(0.25);
+        rightMotor.setPower(0.25);
 
         sleep(2000);        // wait for 2 seconds.
 
