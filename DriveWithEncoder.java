@@ -21,7 +21,8 @@ public class DriveWithEncoder extends LinearOpMode
     {
         leftMotor = hardwareMap.dcMotor.get("left_motor");
         rightMotor = hardwareMap.dcMotor.get("right_motor");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // reset encoder count kept by left motor.
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -48,8 +49,8 @@ public class DriveWithEncoder extends LinearOpMode
         
         // set both motors to 25% power. Movement will start.
 
-        leftMotor.setPower(-0.25);
-        rightMotor.setPower(-0.25);
+        leftMotor.setPower(0.25);
+        rightMotor.setPower(0.25);
 
         // wait while opmode is active and left motor is busy running to position.
 
@@ -84,8 +85,8 @@ public class DriveWithEncoder extends LinearOpMode
 
         leftMotor.setTargetPosition(0);
 
-        leftMotor.setPower(0.25);
-        rightMotor.setPower(0.25);
+        leftMotor.setPower(-0.25);
+        rightMotor.setPower(-0.25);
 
         while (opModeIsActive() && leftMotor.getCurrentPosition() < leftMotor.getTargetPosition())
         {
