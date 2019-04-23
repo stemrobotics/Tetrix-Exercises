@@ -21,7 +21,8 @@ public class DriveArcade extends LinearOpMode
     {
         leftMotor = hardwareMap.dcMotor.get("left_motor");
         rightMotor = hardwareMap.dcMotor.get("right_motor");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Mode", "waiting");
         telemetry.update();
@@ -32,8 +33,8 @@ public class DriveArcade extends LinearOpMode
 
         while (opModeIsActive())
         {
-            yValue = gamepad1.right_stick_y;
-            xValue = gamepad1.right_stick_x;
+            yValue = gamepad1.right_stick_y * -1;
+            xValue = gamepad1.right_stick_x * -1;
 
             leftPower =  yValue - xValue;
             rightPower = yValue + xValue;
