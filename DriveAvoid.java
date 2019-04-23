@@ -31,7 +31,8 @@ public class DriveAvoid extends LinearOpMode
     {
         leftMotor = hardwareMap.dcMotor.get("left_motor");
         rightMotor = hardwareMap.dcMotor.get("right_motor");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // get a reference to the touch sensor.
         touch = hardwareMap.touchSensor.get("touch_sensor");
@@ -75,8 +76,8 @@ public class DriveAvoid extends LinearOpMode
             correction = checkDirection();
 
             // set power levels.
-            leftMotor.setPower(-power + correction);
-            rightMotor.setPower(-power - correction);
+            leftMotor.setPower(power - correction);
+            rightMotor.setPower(power + correction);
 
             // We record the sensor values because we will test them in more than
             // one place with time passing between those places. See the lesson on
@@ -152,14 +153,14 @@ public class DriveAvoid extends LinearOpMode
 
         if (degrees < 0)
         {   // turn right.
-            leftPower = -power;
-            rightPower = power;
+            leftPower = power;
+            rightPower = -power;
             targetAngle = 360 + degrees;    // degrees is - for right turn.
         }
         else if (degrees > 0)
         {   // turn left.
-            leftPower = power;
-            rightPower = -power;
+            leftPower = -power;
+            rightPower = power;
             targetAngle = degrees;
         }
         else return;
