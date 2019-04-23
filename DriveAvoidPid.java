@@ -48,7 +48,7 @@ public class DriveAvoidPid extends LinearOpMode
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // get a reference to REV Touch sensor.
-        touch = hardwareMap.digitalChannel.get("touch_sensor");
+        touch = hardwareMap.touchSensor.get("touch_sensor");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
