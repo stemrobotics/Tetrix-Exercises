@@ -40,9 +40,9 @@ public class DriveAvoidPid extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
         leftMotor = hardwareMap.dcMotor.get("left_motor");
-
         rightMotor = hardwareMap.dcMotor.get("right_motor");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -113,8 +113,8 @@ public class DriveAvoidPid extends LinearOpMode
             telemetry.update();
 
             // set power levels.
-            leftMotor.setPower(-power + correction);
-            rightMotor.setPower(-power - correction);
+            leftMotor.setPower(power - correction);
+            rightMotor.setPower(power + correction);
 
             // We record the sensor values because we will test them in more than
             // one place with time passing between those places. See the lesson on
@@ -222,24 +222,24 @@ public class DriveAvoidPid extends LinearOpMode
             // On right turn we have to get off zero first.
             while (opModeIsActive() && getAngle() == 0)
             {
-                leftMotor.setPower(-power);
-                rightMotor.setPower(power);
+                leftMotor.setPower(power);
+                rightMotor.setPower(-power);
                 sleep(100);
             }
 
             do
             {
                 power = pidRotate.performPID(getAngle()); // power will be - on right turn.
-                leftMotor.setPower(power);
-                rightMotor.setPower(-power);
+                leftMotor.setPower(-power);
+                rightMotor.setPower(power);
             } while (opModeIsActive() && !pidRotate.onTarget());
         }
         else    // left turn.
             do
             {
                 power = pidRotate.performPID(getAngle()); // power will be + on left turn.
-                leftMotor.setPower(power);
-                rightMotor.setPower(-power);
+                leftMotor.setPower(-power);
+                rightMotor.setPower(power);
             } while (opModeIsActive() && !pidRotate.onTarget());
 
         // turn the motors off.
