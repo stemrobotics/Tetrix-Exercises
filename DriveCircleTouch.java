@@ -48,7 +48,7 @@ public class DriveCircleTouch extends LinearOpMode
         resetStartTime();
         // drive until touch sensor button pressed or 5 seconds passes.
 
-        while (getRuntime() < 5 && !touch.isPressed()) {idle();}
+        while (getRuntime() < 5 && !touch.isPressed()) { idle(); }
 
         // turn the motors off.
 
