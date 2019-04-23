@@ -88,7 +88,7 @@ public class DriveWithEncoder extends LinearOpMode
         leftMotor.setPower(-0.25);
         rightMotor.setPower(-0.25);
 
-        while (opModeIsActive() && leftMotor.getCurrentPosition() < leftMotor.getTargetPosition())
+        while (opModeIsActive() && leftMotor.getCurrentPosition() > 0)
         {
             telemetry.addData("encoder-back", leftMotor.getCurrentPosition());
             telemetry.update();
