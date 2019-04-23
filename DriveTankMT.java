@@ -27,7 +27,8 @@ public class DriveTankMT extends LinearOpMode
     {
         leftMotor = hardwareMap.dcMotor.get("left_motor");
         rightMotor = hardwareMap.dcMotor.get("right_motor");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // create an instance of the DriveThread.
 
@@ -97,8 +98,8 @@ public class DriveTankMT extends LinearOpMode
                     // we record the Y values in the main class to make showing them in telemetry
                     // easier.
 
-                    leftY = gamepad1.left_stick_y;
-                    rightY = gamepad1.right_stick_y;
+                    leftY = gamepad1.left_stick_y * -1;
+                    rightY = gamepad1.right_stick_y * -1;
 
                     leftMotor.setPower(Range.clip(leftY, -1.0, 1.0));
                     rightMotor.setPower(Range.clip(rightY, -1.0, 1.0));
