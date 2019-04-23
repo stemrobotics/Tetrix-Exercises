@@ -21,7 +21,8 @@ public class DriveSquare extends LinearOpMode
     {
         leftMotor = hardwareMap.dcMotor.get("left_motor");
         rightMotor = hardwareMap.dcMotor.get("right_motor");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Mode", "waiting");
         telemetry.update();
@@ -42,8 +43,8 @@ public class DriveSquare extends LinearOpMode
              telemetry.addData("Mode", "driving side " + (i + 1));
              telemetry.update();
 
-             leftMotor.setPower(-0.25);
-             rightMotor.setPower(-0.25);
+             leftMotor.setPower(0.25);
+             rightMotor.setPower(0.25);
 
              sleep(1000); // drive straight for 1 second.
 
@@ -54,8 +55,8 @@ public class DriveSquare extends LinearOpMode
 
              // now set motors, one forward one reverse. Should cause the bot to rotate.
 
-             leftMotor.setPower(-0.25);
-             rightMotor.setPower(0.25);
+             leftMotor.setPower(0.25);
+             rightMotor.setPower(-0.25);
 
              sleep(1700); // adjust this delay to get the bot to rotate 90 degrees.
 
