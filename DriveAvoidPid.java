@@ -65,7 +65,9 @@ public class DriveAvoidPid extends LinearOpMode
         imu.initialize(parameters);
 
         // Set PID proportional value to start reducing power at about 50 degrees of rotation.
-        pidRotate = new PIDController(.005, 0, 0);
+        // P by itself may stall before turn completed so we add a bit of I (integral) which
+        // causes the PID controller to gently increase power if the turn is not completed.
+        pidRotate = new PIDController(.005, .00003, 0);
 
         // Set PID proportional value to produce non-zero correction value when robot veers off
         // straight line. P value controls how sensitive the correction is.
@@ -196,19 +198,18 @@ public class DriveAvoidPid extends LinearOpMode
         resetAngle();
 
         // start pid controller. PID controller will monitor the turn angle with respect to the
-        // target angle and reduce power as we approach the target angle with a minimum of 20%.
-        // This is to prevent the robots momentum from overshooting the turn after we turn off the
-        // power. The PID controller reports onTarget() = true when the difference between turn
-        // angle and target angle is within 2% of target (tolerance). This helps prevent overshoot.
-        // The minimum power is determined by testing and must enough to prevent motor stall and
-        // complete the turn. Note: if the gap between the starting power and the stall (minimum)
-        // power is small, overshoot may still occur. Overshoot is dependant on the motor and
-        // gearing configuration, starting power, weight of the robot and the on target tolerance.
+        // target angle and reduce power as we approach the target angle. This is to prevent the
+        // robots momentum from overshooting the turn after we turn off the power. The PID controller
+        // reports onTarget() = true when the difference between turn angle and target angle is within
+        // 2% of target (tolerance). This helps prevent overshoot. Overshoot is dependant on the motor
+        // and gearing configuration, starting power, weight of the robot and the on target tolerance.
+        // If the controller overshoots, it will reverse the sign of the output turning the robot back
+        // toward the setpoint value.
 
         pidRotate.reset();
         pidRotate.setSetpoint(degrees);
         pidRotate.setInputRange(0, 90);
-        pidRotate.setOutputRange(.20, power);
+        pidRotate.setOutputRange(0, power);
         pidRotate.setTolerance(2);
         pidRotate.enable();
 
