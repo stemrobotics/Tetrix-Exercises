@@ -67,7 +67,7 @@ public class DriveAvoidPid extends LinearOpMode
         // Set PID proportional value to start reducing power at about 50 degrees of rotation.
         // P by itself may stall before turn completed so we add a bit of I (integral) which
         // causes the PID controller to gently increase power if the turn is not completed.
-        pidRotate = new PIDController(.005, .00003, 0);
+        pidRotate = new PIDController(.003, .00003, 0);
 
         // Set PID proportional value to produce non-zero correction value when robot veers off
         // straight line. P value controls how sensitive the correction is.
@@ -201,16 +201,16 @@ public class DriveAvoidPid extends LinearOpMode
         // target angle and reduce power as we approach the target angle. This is to prevent the
         // robots momentum from overshooting the turn after we turn off the power. The PID controller
         // reports onTarget() = true when the difference between turn angle and target angle is within
-        // 2% of target (tolerance). This helps prevent overshoot. Overshoot is dependant on the motor
-        // and gearing configuration, starting power, weight of the robot and the on target tolerance.
-        // If the controller overshoots, it will reverse the sign of the output turning the robot back
-        // toward the setpoint value.
+        // 1% of target (tolerance) which is about 1 degree. This helps prevent overshoot. Overshoot is
+        // dependant on the motor and gearing configuration, starting power, weight of the robot and the
+        // on target tolerance. If the controller overshoots, it will reverse the sign of the output 
+        // turning the robot back toward the setpoint value.
 
         pidRotate.reset();
         pidRotate.setSetpoint(degrees);
-        pidRotate.setInputRange(0, 90);
+        pidRotate.setInputRange(0, degrees);
         pidRotate.setOutputRange(0, power);
-        pidRotate.setTolerance(2);
+        pidRotate.setTolerance(1);
         pidRotate.enable();
 
         // getAngle() returns + when rotating counter clockwise (left) and - when rotating
@@ -502,7 +502,7 @@ public class DriveAvoidPid extends LinearOpMode
          */
         public boolean onTarget()
         {
-            return (Math.abs(m_error) < Math.abs(m_tolerance / 100 * (m_maximumInput - m_minimumInput)));
+            return (Math.abs(m_error) < Math.abs(m_tolerance / 100.0 * (m_maximumInput - m_minimumInput)));
         }
 
         /**
