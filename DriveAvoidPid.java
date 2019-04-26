@@ -190,13 +190,16 @@ public class DriveAvoidPid extends LinearOpMode
     }
 
     /**
-     * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
+     * Rotate left or right the number of degrees. Does not support turning more than 359 degrees.
      * @param degrees Degrees to turn, + is left - is right
      */
     private void rotate(int degrees, double power)
     {
         // restart imu angle tracking.
         resetAngle();
+        
+        // if degrees > 359 we cap at 359 with same sign as original degrees.
+        if (Math.abs(degrees) > 359) degrees = (int) Math.copySign(359, degrees);
 
         // start pid controller. PID controller will monitor the turn angle with respect to the
         // target angle and reduce power as we approach the target angle. This is to prevent the
