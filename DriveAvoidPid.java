@@ -31,7 +31,7 @@ public class DriveAvoidPid extends LinearOpMode
     TouchSensor             touch;
     BNO055IMU               imu;
     Orientation             lastAngles = new Orientation();
-    double                  globalAngle, power = .30, correction;
+    double                  globalAngle, power = .30, correction, rotation;
     boolean                 aButton, bButton, touched;
     PIDController           pidRotate, pidDrive;
 
@@ -112,6 +112,7 @@ public class DriveAvoidPid extends LinearOpMode
             telemetry.addData("1 imu heading", lastAngles.firstAngle);
             telemetry.addData("2 global heading", globalAngle);
             telemetry.addData("3 correction", correction);
+            telemetry.addData("4 turn rotation", rotation);
             telemetry.update();
 
             // set power levels.
@@ -129,8 +130,8 @@ public class DriveAvoidPid extends LinearOpMode
             if (touched || aButton || bButton)
             {
                 // backup.
-                leftMotor.setPower(power);
-                rightMotor.setPower(power);
+                leftMotor.setPower(-power);
+                rightMotor.setPower(-power);
 
                 sleep(500);
 
@@ -247,6 +248,8 @@ public class DriveAvoidPid extends LinearOpMode
         rightMotor.setPower(0);
         leftMotor.setPower(0);
 
+        rotation = getAngle();
+        
         // wait for rotation to stop.
         sleep(500);
 
