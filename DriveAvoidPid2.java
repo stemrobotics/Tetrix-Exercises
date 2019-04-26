@@ -140,10 +140,10 @@ public class DriveAvoidPid2 extends LinearOpMode
                 rightMotor.setPower(0);
 
                 // turn 90 degrees right.
-                if (touched || aButton) rotate(-350, power);
+                if (touched || aButton) rotate(-90, power);
 
                 // turn 90 degrees left.
-                if (bButton) rotate(350, power);
+                if (bButton) rotate(90, power);
             }
         }
 
@@ -366,7 +366,8 @@ public class DriveAvoidPid2 extends LinearOpMode
          * Get the Proportional coefficient
          * @return proportional coefficient
          */
-        public double getP() {
+        public double getP() 
+        {
             return m_P;
         }
 
@@ -374,7 +375,8 @@ public class DriveAvoidPid2 extends LinearOpMode
          * Get the Integral coefficient
          * @return integral coefficient
          */
-        public double getI() {
+        public double getI() 
+        {
             return m_I;
         }
 
@@ -382,7 +384,8 @@ public class DriveAvoidPid2 extends LinearOpMode
          * Get the Differential coefficient
          * @return differential coefficient
          */
-        public double getD() {
+        public double getD() 
+        {
             return m_D;
         }
 
@@ -416,7 +419,8 @@ public class DriveAvoidPid2 extends LinearOpMode
          *  the setpoint.
          * @param continuous Set to true turns on continuous, false turns off continuous
          */
-        public void setContinuous(boolean continuous) {
+        public void setContinuous(boolean continuous) 
+        {
             m_continuous = continuous;
         }
 
@@ -426,7 +430,8 @@ public class DriveAvoidPid2 extends LinearOpMode
          *  be the same point and automatically calculates the shortest route to
          *  the setpoint.
          */
-        public void setContinuous() {
+        public void setContinuous() 
+        {
             this.setContinuous(true);
         }
 
@@ -482,7 +487,8 @@ public class DriveAvoidPid2 extends LinearOpMode
          * Returns the current setpoint of the PIDController
          * @return the current setpoint
          */
-        public double getSetpoint() {
+        public double getSetpoint() 
+        {
             return m_setpoint;
         }
 
@@ -490,7 +496,8 @@ public class DriveAvoidPid2 extends LinearOpMode
          * Retruns the current difference of the input from the setpoint
          * @return the current error
          */
-        public synchronized double getError() {
+        public synchronized double getError() 
+        {
             return m_error;
         }
 
@@ -499,7 +506,8 @@ public class DriveAvoidPid2 extends LinearOpMode
          * OnTarget. (Input of 15.0 = 15 percent)
          * @param percent error which is tolerable
          */
-        public void setTolerance(double percent) {
+        public void setTolerance(double percent) 
+        {
             m_tolerance = percent;
         }
 
@@ -524,7 +532,8 @@ public class DriveAvoidPid2 extends LinearOpMode
         /**
          * Stop running the PIDController.
          */
-        public void disable() {
+        public void disable() 
+        {
             m_enabled = false;
         }
 
