@@ -525,7 +525,8 @@ public class DriveAvoidPid2 extends LinearOpMode
         /**
          * Begin running the PIDController
          */
-        public void enable() {
+        public void enable() 
+        {
             m_enabled = true;
         }
 
