@@ -45,7 +45,7 @@ public class DriveWithEncoder extends LinearOpMode
 
         // set left motor to run for 5000 encoder counts.
 
-        leftMotor.setTargetPosition(-5000);
+        leftMotor.setTargetPosition(5000);
         
         // set both motors to 25% power. Movement will start.
 
