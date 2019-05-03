@@ -43,7 +43,7 @@ public class DriveWithEncoder extends LinearOpMode
         telemetry.addData("Mode", "running");
         telemetry.update();
 
-        // set left motor to run for 5000 encoder counts.
+        // set left motor to run to 5000 encoder counts.
 
         leftMotor.setTargetPosition(5000);
         
@@ -67,7 +67,7 @@ public class DriveWithEncoder extends LinearOpMode
         leftMotor.setPower(0.0);
         rightMotor.setPower(0.0);
 
-        // wait 5 sec to you can observe the final encoder position.
+        // wait 5 sec so you can observe the final encoder position.
 
         resetStartTime();
 
@@ -78,12 +78,10 @@ public class DriveWithEncoder extends LinearOpMode
             idle();
         }
 
-        // set position for back up to starting point. In this example instead of
-        // having the motor monitor the encoder we will monitor the encoder ourselves.
+        // Now back up to starting point. In this example instead of
+        // having the motor monitor the encoder, we will monitor the encoder ourselves.
 
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        leftMotor.setTargetPosition(0);
 
         leftMotor.setPower(-0.25);
         rightMotor.setPower(-0.25);
@@ -99,6 +97,8 @@ public class DriveWithEncoder extends LinearOpMode
 
         leftMotor.setPower(0.0);
         rightMotor.setPower(0.0);
+
+        // wait 5 sec so you can observe the final encoder position.
 
         resetStartTime();
 
