@@ -23,7 +23,7 @@ public class DriveWithGripper2 extends LinearOpMode
     CRServo contServo;
     float   leftY, rightY;
     double  armPosition, gripPosition, contPower;
-    double  aLastTime, bLastTime;
+    double  aLastTime, bLastTime, MIN_POSITION = 0, MAX_POSITION = 1;
 
     // called when init button is  pressed.
     @Override
@@ -45,8 +45,8 @@ public class DriveWithGripper2 extends LinearOpMode
 
         waitForStart();
 
-        armPosition = .5;                    // set arm to half way up.
-        gripPosition = Servo.MAX_POSITION;   // set grip to full open.
+        armPosition = .5;                   // set arm to half way up.
+        gripPosition = MAX_POSITION;        // set grip to full open.
 
         while (opModeIsActive())
         {
@@ -71,7 +71,7 @@ public class DriveWithGripper2 extends LinearOpMode
             if (gamepad1.a)
                 if (getRuntime() - aLastTime > .075)
                 {
-                    if (armPosition > Servo.MIN_POSITION) armPosition -= .05;
+                    if (armPosition > MIN_POSITION) armPosition -= .05;
                     aLastTime = getRuntime();
                 }
 
@@ -79,15 +79,15 @@ public class DriveWithGripper2 extends LinearOpMode
             if (gamepad1.b)
                 if (getRuntime() - bLastTime > .075)
                 {
-                    if (armPosition < Servo.MAX_POSITION) armPosition += .05;
+                    if (armPosition < MAX_POSITION) armPosition += .05;
                     bLastTime = getRuntime();
                 }
 
             // open the gripper on X button if not already at most open position.
-            if (gamepad1.x && gripPosition < Servo.MAX_POSITION) gripPosition = gripPosition + .01;
+            if (gamepad1.x && gripPosition < MAX_POSITION) gripPosition = gripPosition + .01;
 
             // close the gripper on Y button if not already at the closed position.
-            if (gamepad1.y && gripPosition > Servo.MIN_POSITION) gripPosition = gripPosition - .01;
+            if (gamepad1.y && gripPosition > MIN_POSITION) gripPosition = gripPosition - .01;
 
             // Set continuous servo power level and direction.
             if (gamepad1.dpad_left)
@@ -98,8 +98,8 @@ public class DriveWithGripper2 extends LinearOpMode
                 contPower = 0.0;
 
             // set the servo position values as we have computed them.
-            armServo.setPosition(Range.clip(armPosition, Servo.MIN_POSITION, Servo.MAX_POSITION));
-            gripServo.setPosition(Range.clip(gripPosition, Servo.MIN_POSITION, Servo.MAX_POSITION));
+            armServo.setPosition(Range.clip(armPosition, MIN_POSITION, MAX_POSITION));
+            gripServo.setPosition(Range.clip(gripPosition, MIN_POSITION, MAX_POSITION));
             contServo.setPower(contPower);
 
             telemetry.addData("arm servo", String.format("position=%.2f  actual=%.2f", armPosition, armServo.getPosition()));
