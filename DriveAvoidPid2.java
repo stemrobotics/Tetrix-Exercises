@@ -113,7 +113,8 @@ public class DriveAvoidPid2 extends LinearOpMode
             telemetry.addData("2 global heading", globalAngle);
             telemetry.addData("3 correction", correction);
             telemetry.addData("4 turn rotation", rotation);
-           telemetry.update();
+            telemetry.addData("5 power", leftMotor.getPower());
+            telemetry.update();
 
             // set power levels.
             leftMotor.setPower(power - correction);
@@ -210,8 +211,19 @@ public class DriveAvoidPid2 extends LinearOpMode
 
         pidRotate.reset();
 
+        // Proportional factor can be found by dividing the max desired pid output by
+        // the setpoint or target. Here 30% power is divided by 90 degrees (.30 / 90)
+        // to get a P factor of .003. This works for the robot we testing this code with.
+        // Your robot may vary but this way finding P works well in most situations.
         double p = Math.abs(power/degrees);
-        double i = p / 100.0;
+
+        // Integrative factor can be approximated by diving P by 100. Then you have to tune
+        // this value until the robot turns, slows down and stops accurately and also does
+        // not take too long to "home" in on the setpoint. Started with 100 but robot did not
+        // slow and overshot the turn. Increasing I slowed the end of the turn and completed
+        // the turn in a timely manner
+        double i = p / 200.0;
+
         pidRotate.setPID(p, i, 0);
 
         pidRotate.setSetpoint(degrees);
