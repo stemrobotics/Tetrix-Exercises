@@ -9,7 +9,7 @@ public class PIDController
     private double m_D;                     // factor for "derivative" control
     private double m_input;                 // sensor input for pid controller
     private double m_maximumOutput = 1.0;	// |maximum output|
-    private double m_minimumOutput = -1.0;	// |minimum output|
+    private double m_minimumOutput = 0.0;	// |minimum output|
     private double m_maximumInput = 0.0;	// maximum input - limit setpoint to this
     private double m_minimumInput = 0.0;	// minimum input - limit setpoint to this
     private boolean m_continuous = false;	// do the endpoints wrap around? eg. Absolute encoder
@@ -35,9 +35,7 @@ public class PIDController
     }
 
     /**
-     * Read the input, calculate the output accordingly, and write to the output.
-     * This should only be called by the PIDTask
-     * and is created during initialization.
+     * Using the current input, calculate the current output.
      */
     private void calculate()
     {
@@ -46,7 +44,7 @@ public class PIDController
         // If enabled then proceed into controller calculations
         if (m_enabled)
         {
-            // Calculate the error signal
+            // Calculate the error value
             m_error = m_setpoint - m_input;
 
             // If continuous is set to true allow wrap around
@@ -69,7 +67,7 @@ public class PIDController
                 m_totalError += m_error;
 
             // Perform the primary PID calculation
-            m_result = m_P * m_error + m_I * m_totalError + m_D * (m_error - m_prevError);
+            m_result = (m_P * m_error) + (m_I * m_totalError) + (m_D * (m_error - m_prevError));
 
             // Set the current error to the previous error for the next cycle.
             m_prevError = m_error;
@@ -173,7 +171,7 @@ public class PIDController
     }
 
     /**
-     * Sets the maximum and minimum values expected from the input.
+     * Sets the maximum and minimum values expected for the input.
      *
      * @param minimumInput the minimum value expected from the input, always positive
      * @param maximumInput the maximum value expected from the output, always positive
@@ -186,10 +184,10 @@ public class PIDController
     }
 
     /**
-     * Sets the minimum and maximum values to write.
+     * Sets the minimum and maximum values to output.
      *
-     * @param minimumOutput the minimum value to write to the output, always positive
-     * @param maximumOutput the maximum value to write to the output, always positive
+     * @param minimumOutput the minimum value to output, always positive
+     * @param maximumOutput the maximum value to output, always positive
      */
     public void setOutputRange(double minimumOutput, double maximumOutput)
     {
