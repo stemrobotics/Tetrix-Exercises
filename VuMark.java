@@ -1,5 +1,4 @@
 
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -199,7 +198,6 @@ public class VuMarkIdentification extends LinearOpMode
         {
             parameters.vuforiaLicenseKey = "-- Insert your API Key here --";
 
-            //vuforia = ClassFactory.createVuforiaLocalizer(parameters);
             vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
             /**
