@@ -1,11 +1,12 @@
 
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -28,7 +29,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * class or a library class.
  *
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
- * is explained in {@link ConceptVuforiaNavigation}.
+ * is explained in FIRST sample code: ConceptVuforiaNavigation.
  *
  *  VuMark is like a bar code. It is an image that contains encoded variable information. For the
  *  Relic Recovery game, the VuMark is the image of a temple. Encoded on that image in hexagonal
@@ -38,7 +39,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  *
  * VuMarks are defined by two data files created by the Vuforia Target Manager. In our case, those
  * files are provided by FIRST. The files are embedded in the robot controller program by putting
- * them in the assests directory of FtcRobotController section of the project.
+ * them in the assets directory of FtcRobotController section of the project.
+ *
+ * You can capture VuMarks with the robot controller phone camera or with USB a webcam attached to
+ * a Control Hub.
+ *
+ *
+ * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
+ * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
+ * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
+ * web site at https://developer.vuforia.com/license-manager.
+ *
+ * Vuforia license keys are always 380 characters long, and look as if they contain mostly
+ * random data. As an example, here is a example of a fragment of a valid key:
+ *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
+ * Once you've obtained a license key, copy the string from the Vuforia web site
+ * and paste it in to your code on the next line, between the double quotes. The license key needs
+ * to support external cameras to use webcams.
  */
 
 @Autonomous(name="VuMark Id", group ="Exercises")
@@ -51,23 +68,31 @@ public class VuMarkIdentification extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException
     {
-        // Create an instance of VuMarkFinder. This can take some time to complete.
-        vmf = new VuMarkFinder(hardwareMap, "RelicVuMark", true, VuforiaLocalizer.CameraDirection.BACK);
+        // Create an instance of VuMarkFinder using RC phone camera.
+        // Here we chose the back (HiRes) camera (for greater range), but
+        // for a competition robot, the front camera might be more convenient.
+        vmf = new VuMarkFinder(hardwareMap, "RelicVuMark", VuforiaLocalizer.CameraDirection.BACK, true);
+
+        // Create an instance of VuMarkFinder using USB webcam.
+        //vmf = new VuMarkFinder(hardwareMap, "RelicVuMark", "Webcam 1", true);
 
         telemetry.addData("Mode", "Press Play to start");
         telemetry.update();
 
-        waitForStart();
+        //waitForStart();
 
-        // Start VuForia background process looking for vumarks in camera field of view.
+        // Start VuForia background process looking for vumarks in camera field of view. Activate
+        // before waitForStart() allows you to see camera stream on DS at INIT wait. See DS menu.
         vmf.activate();
+
+        waitForStart();
 
         while (opModeIsActive())
         {
-            // See if a vumark is visible.
+            // See if a VuMark is currently visible.
             if (vmf.findVuMark())
             {
-                // Convert vumark instance  id to game specific id.
+                // Convert vumark instance id to game specific id.
                 vuMark = RelicRecoveryVuMark.from(vmf.instanceId);
 
                 telemetry.addData("VuMark", "%s visible", vuMark);
@@ -94,29 +119,29 @@ public class VuMarkIdentification extends LinearOpMode
         private VuforiaTrackables   trackables;
         private VuforiaTrackable    template;
 
+        private VuforiaLocalizer.Parameters parameters;
+
         public VuMarkInstanceId     instanceId;
         public OpenGLMatrix         pose;
         public double               tX, tY, tZ, rX, rY, rZ;
 
-        /** Constructor.
+        /** Constructor for using RC phone camera.
          * Create an instance of the class.
          * @param hMap HardwareMap object.
          * @param assetName Name of the asset files containing the VuMark definition.
          * @param includeViewer True to display camera viewer on RC phone.
-         * @param camera Front or Back camera choice.
+         * @param camera Front or Back RC phone camera choice.
          */
         public VuMarkFinder(HardwareMap hMap,
                             String assetName,
-                            boolean includeViewer,
-                            VuforiaLocalizer.CameraDirection camera)
+                            VuforiaLocalizer.CameraDirection camera,
+                            boolean includeViewer)
         {
-            VuforiaLocalizer.Parameters parameters;
-
             /*
-             * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
-             * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
+             * To start up Vuforia, tell it the view that we wish to use for camera monitor
+             * (on the RC phone). If no camera monitor is desired, use the parameterless
+             * constructor instead .
              */
-
             if (includeViewer)
             {
                 int cameraMonitorViewId = hMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hMap.appContext.getPackageName());
@@ -124,21 +149,63 @@ public class VuMarkIdentification extends LinearOpMode
             }
             else
                 // OR...  Do Not Activate the Camera Monitor View, to save power
-                parameters = new VuforiaLocalizer.Parameters();
-
-            parameters.vuforiaLicenseKey = "AQdDh+P/////AAAAGYG4khX9T0Mai5pYz9oTllp2KuZI24ZwM9ostcBXs2A90ddi/sJDOAabZEVM/5jhWNRN40BJ32nrSkbKTnqMnZ10v1A/PjDvnKwLG7zpA/wATnngFrhODfBwaHvP1WouKc+9f8QPOfLJnoGAlohWpfNWmdSe0UiyAeVoNCRW6TlLHECp85fs/acyk0eOy3qvUmJSFOTIsa5sJHVHscqpofheFgzhfmC7c+VUHGB8fIDiFBLdJBK9My1B2BBsJhblTZWgeVjOFI28qEHiEm7ADigF4zkH890YMfBRDr70ajPRJfOuzPAQA2QmOatQyL3tO/s9VmiIkcPDirMkTdwPbfBxUYkkCBGUDQMtYstBS58G";
+                parameters  = new VuforiaLocalizer.Parameters();
 
             /*
              * We also indicate which camera on the RC that we wish to use.
-             * Here we chose the back (HiRes) camera (for greater range), but
-             * for a competition robot, the front camera might be more convenient.
              */
             parameters.cameraDirection = camera;
             parameters.useExtendedTracking = false;
-            vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+            initializeVuforia(assetName);
+        }
+
+        /** Constructor for using webcam on Control Hub.
+         * Create an instance of the class.
+         * @param hMap HardwareMap object.
+         * @param assetName Name of the asset files containing the VuMark definition.
+         * @param cameraName Name of webcam as configured on Control Hub.
+         * @param includeViewer True to display camera viewer on DS phone.
+         */
+        public VuMarkFinder(HardwareMap hMap,
+                            String assetName,
+                            String cameraName,
+                            boolean includeViewer)
+        {
+            /*
+             * To start up Vuforia, tell it the view that we wish to use for camera monitor
+             * (on the RC phone). If no camera monitor is desired, use the parameterless
+             * constructor instead .
+             */
+            if (includeViewer)
+            {
+                int cameraMonitorViewId = hMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hMap.appContext.getPackageName());
+                parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+            }
+            else
+                // OR...  Do Not Activate the Camera Monitor View, to save power
+                parameters  = new VuforiaLocalizer.Parameters();
 
             /*
-             * Load the data files containing the VuMark definition. This code supports 1 VuMark.
+             * Retrieve and set the USB web camera we are to use.
+             */
+            parameters.cameraName = hMap.get(WebcamName.class, cameraName);
+            parameters.useExtendedTracking = false;
+
+            initializeVuforia(assetName);
+        }
+
+        private void initializeVuforia(String assetName)
+        {
+            parameters.vuforiaLicenseKey = "-- Insert your API Key here --";
+
+            //vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+            vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+            /**
+             * Load the data set containing the VuMarks for Relic Recovery. There's only one trackable
+             * in this data set: all three of the VuMarks in the game were created from this one template,
+             * but differ in their instance id information.
              */
             trackables = vuforia.loadTrackablesFromAsset(assetName);
             template = trackables.get(0);
@@ -159,12 +226,18 @@ public class VuMarkIdentification extends LinearOpMode
          */
         public boolean findVuMark()
         {
-             // See if any of the instances of the template are currently visible.
+            // See if any instances of the template are currently visible.
             instanceId = ((VuforiaTrackableDefaultListener) template.getListener()).getVuMarkInstanceId();
 
             if (instanceId != null)
             {
-                pose = ((VuforiaTrackableDefaultListener) template.getListener()).getPose();
+                // Get and display pose information, that is, vumark location relative to camera
+                // center of view.
+
+                if (vuforia.getCameraName().isWebcam())
+                    pose = ((VuforiaTrackableDefaultListener) template.getListener()).getFtcCameraFromTarget();
+                else
+                    pose = ((VuforiaTrackableDefaultListener) template.getListener()).getPose();
 
                 if (pose != null)
                 {
@@ -196,7 +269,7 @@ public class VuMarkIdentification extends LinearOpMode
          * @param pose Pose object returned when VuMark is found.
          * @return Pose description.
          */
-        String formatPose(OpenGLMatrix pose)
+        protected String formatPose(OpenGLMatrix pose)
         {
             return (pose != null) ? pose.formatAsTransform() : "null";
         }
