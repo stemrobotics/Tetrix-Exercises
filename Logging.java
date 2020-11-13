@@ -53,7 +53,7 @@ public class Logging
     //
     // ZTE: adb pull //storage/sdcard0/Logging.txt c:\temp\robot_logging.txt
     // MOTO G: adb pull sdcard/Logging.txt c:\temp\robot_logging.txt
-    // Control Hub: adb pull //storage/emulated/0/Logging.txt c:\temp\robot_Logging.txt
+    // Control Hub: adb pull sdcard/Logging.txt c:\temp\robot_Logging.txt
 
     /**
      * Indicates if logging is turned on or off.
