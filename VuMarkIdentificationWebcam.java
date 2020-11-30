@@ -171,7 +171,7 @@ public class VuMarkIdentificationWebcam extends LinearOpMode
                 // OR...  Do Not Activate the Camera Monitor View, to save power
                 parameters = new VuforiaLocalizer.Parameters();
 
-            parameters.vuforiaLicenseKey = "AaDAvEH/////AAABmT7XsefufE2DuYYnYCxrBsQQ9FrK/39uullPQn7b/XVUOAU9eFLRcRYYm1JY0ChQpml/x1CPv5kyBtc5rwVrTM0I2/VcBKiulYWzGM8kZDYAIwIwpncnYbyxCHgN80KAZplNqMiL0lWP1SKFE1jXojLSu33a+gcyDvRQCJtHteF976mcXTsadxZCJFhUGx198hOmuK5HNTwjvNoxcEUmF5BOS9hLDBCrZnfTHYbYyKoKMX17a3K7FR+T8C8s+zOGvKXc9vtjNTJDUZ0D1gvyDSlzu52fHXAVTb7HRJN9rapGZ6wyqn2UGay5dxjCOFsxsWZFSzPRN3zZri//WalFQysr6MWUEykjDJhGKZucvBHr";
+            parameters.vuforiaLicenseKey = "-- Insert your API Key here --";
 
             /*
              * We also indicate which camera on the RC that we wish to use.
