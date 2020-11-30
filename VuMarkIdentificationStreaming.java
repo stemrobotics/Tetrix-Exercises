@@ -221,7 +221,7 @@ public class VuMarkIdentificationStreaming extends LinearOpMode
 
         private void initializeVuforia(String assetName)
         {
-            parameters.vuforiaLicenseKey = "AaDAvEH/////AAABmT7XsefufE2DuYYnYCxrBsQQ9FrK/39uullPQn7b/XVUOAU9eFLRcRYYm1JY0ChQpml/x1CPv5kyBtc5rwVrTM0I2/VcBKiulYWzGM8kZDYAIwIwpncnYbyxCHgN80KAZplNqMiL0lWP1SKFE1jXojLSu33a+gcyDvRQCJtHteF976mcXTsadxZCJFhUGx198hOmuK5HNTwjvNoxcEUmF5BOS9hLDBCrZnfTHYbYyKoKMX17a3K7FR+T8C8s+zOGvKXc9vtjNTJDUZ0D1gvyDSlzu52fHXAVTb7HRJN9rapGZ6wyqn2UGay5dxjCOFsxsWZFSzPRN3zZri//WalFQysr6MWUEykjDJhGKZucvBHr";
+            parameters.vuforiaLicenseKey = "-- Insert your API Key here --";
 
             vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
