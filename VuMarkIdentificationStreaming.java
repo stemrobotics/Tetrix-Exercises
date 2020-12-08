@@ -81,11 +81,12 @@ public class VuMarkIdentificationStreaming extends LinearOpMode
         // Create an instance of VuMarkFinder using RC phone camera.
         // Here we chose the back (HiRes) camera (for greater range), but
         // for a competition robot, the front camera might be more convenient.
-        vmf = new VuMarkFinder(hardwareMap, "RelicVuMark", VuforiaLocalizer.CameraDirection.BACK, true);
+        //vmf = new VuMarkFinder(hardwareMap, "RelicVuMark", VuforiaLocalizer.CameraDirection.BACK, true);
 
         // Create an instance of VuMarkFinder using USB webcam.
-        //vmf = new VuMarkFinder(hardwareMap, "RelicVuMark", "Webcam 1", true);
+        vmf = new VuMarkFinder(hardwareMap, "RelicVuMark", "Webcam 1", true);
 
+        // Create instances of the Vuforia camera capture and image streaming server.
         vuforiaCapture = new VuforiaCapture(vmf.getLocalizer());
 
         server = new MJpegServer();
@@ -120,11 +121,11 @@ public class VuMarkIdentificationStreaming extends LinearOpMode
 
             telemetry.update();
 
-            //cameraImage = webCam.getImage();
+            // Get a camera image fromm Vuforia and post it to the streaming server.
 
-            cameraImage = vuforiaCapture.getFrame();
+            cameraImage = vuforiaCapture.getImage();
 
-            server.setBitmap(cameraImage);
+            server.setImage(cameraImage);
 
             idle();
         }
@@ -221,7 +222,7 @@ public class VuMarkIdentificationStreaming extends LinearOpMode
 
         private void initializeVuforia(String assetName)
         {
-            parameters.vuforiaLicenseKey = "-- Insert your API Key here --";
+            parameters.vuforiaLicenseKey = "AaDAvEH/////AAABmT7XsefufE2DuYYnYCxrBsQQ9FrK/39uullPQn7b/XVUOAU9eFLRcRYYm1JY0ChQpml/x1CPv5kyBtc5rwVrTM0I2/VcBKiulYWzGM8kZDYAIwIwpncnYbyxCHgN80KAZplNqMiL0lWP1SKFE1jXojLSu33a+gcyDvRQCJtHteF976mcXTsadxZCJFhUGx198hOmuK5HNTwjvNoxcEUmF5BOS9hLDBCrZnfTHYbYyKoKMX17a3K7FR+T8C8s+zOGvKXc9vtjNTJDUZ0D1gvyDSlzu52fHXAVTb7HRJN9rapGZ6wyqn2UGay5dxjCOFsxsWZFSzPRN3zZri//WalFQysr6MWUEykjDJhGKZucvBHr";
 
             vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
