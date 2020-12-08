@@ -13,7 +13,7 @@ import java.util.concurrent.BlockingQueue;
  * when using Vuforia. This allows you use the images for other purposes
  * like streaming to a browser or processing with OpenCV.
  *
- * Vuforia must own the camera so if we  want to do image
+ * Vuforia must own the camera so if we want to do image
  * processing alongside Vuforia, we have to get the images from Vuforia. Once
  * Vuforia is configured create an instance of this class with the localizer
  * object and then you can get images posted by Vuforia for external use.
@@ -26,6 +26,8 @@ import java.util.concurrent.BlockingQueue;
  */
 class VuforiaCapture
 {
+    private static final String TAG = "VuforiaCapture";
+
     private VuforiaLocalizer    vuforia;
 
     private BlockingQueue<VuforiaLocalizer.CloseableFrame> frameQueue;
@@ -34,7 +36,7 @@ class VuforiaCapture
 
     private Object          lock = new Object();
 
-    private MonitorVuforia monitorThread;
+    private MonitorVuforia  monitorThread;
 
     /**
      * Constructor.
@@ -60,6 +62,8 @@ class VuforiaCapture
         monitorThread = new MonitorVuforia();
 
         monitorThread.start();
+
+        RobotLog.v(TAG, "capture started");
     }
 
     /**
@@ -104,3 +108,4 @@ class VuforiaCapture
         }
     }
 }
+
