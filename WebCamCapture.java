@@ -35,6 +35,7 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -49,7 +50,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraCharacteri
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraException;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraFrame;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraManager;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.internal.collections.EvictingBlockingQueue;
 import org.firstinspires.ftc.robotcore.internal.network.CallbackLooper;
 import org.firstinspires.ftc.robotcore.internal.system.ContinuationSynchronizer;
@@ -60,7 +63,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This class will capture and return images from a webcam plugged into the Control Hub
- * USB port. Cannot be used at the same time as Vuforia.
+ * USB port. Cannot be used at the same time as Vuforia. Use VuforiaCapture class if using
+ * Vuforia in your OpMode. Does not support phone cameras. To monitor phone camera use the
+ * VuforiaCapture class.
  */
 public class WebCamCapture
 {
@@ -72,12 +77,14 @@ public class WebCamCapture
 
     /** State regarding our interaction with the camera */
     private CameraManager           cameraManager;
-    private WebcamName              cameraName;
+    //private WebcamName              cameraName;
+    private CameraName              cameraName;
     private Camera                  camera;
     private CameraCaptureSession    cameraCaptureSession;
 
     private Size size;
     private int fps;
+    private String  errorMessage;
 
     /** The queue into which all frames from the camera are placed as they become available.
      * Frames which are not processed by the OpMode are automatically discarded. */
@@ -90,11 +97,12 @@ public class WebCamCapture
 
     /**
      * Constructor.
+     * @param map HardwareMap from calling opMode.
      * @param cameraName Name of webcam from hardware configuration.
      */
-    public WebCamCapture(@NonNull WebcamName cameraName)
+    public WebCamCapture(@NonNull HardwareMap map, @NonNull String cameraName)
     {
-        this.cameraName = cameraName;
+        this.cameraName = map.get(WebcamName.class, cameraName);
 
         callbackHandler = CallbackLooper.getDefault().getHandler();
 
@@ -159,10 +167,37 @@ public class WebCamCapture
 
         Deadline deadline = new Deadline(secondsPermissionTimeout, TimeUnit.SECONDS);
 
-        camera = cameraManager.requestPermissionAndOpenCamera(deadline, cameraName, null);
+        camera = cameraManager.requestPermissionAndOpenCamera(deadline, cameraName, Continuation.create(callbackHandler, new Camera.StateCallback()
+        {
+            @Override
+            public void onOpened(@NonNull Camera camera)
+            {
+                RobotLog.v(TAG, "camera opened");
+            }
+
+            @Override
+            public void onOpenFailed(@NonNull CameraName cameraName, @NonNull Camera.OpenFailure reason)
+            {
+                errorMessage = String.format( "camera open failed: %s (%s)", cameraName, reason);
+                RobotLog.e(TAG, errorMessage);
+            }
+
+            @Override
+            public void onClosed(@NonNull Camera camera)
+            {
+                RobotLog.v(TAG, "camera closed");
+            }
+
+            @Override
+            public void onError(@NonNull Camera camera, Camera.Error cameraError)
+            {
+                errorMessage = String.format( "camera error: %s (%s)", cameraName, cameraError);
+                RobotLog.e(TAG, errorMessage);
+            }
+        }));
 
         if (camera == null)
-            throw new RuntimeException(String.format("camera not found or permission to use not granted: %s", cameraName));
+            throw new RuntimeException(errorMessage);
     }
 
     private void startCamera()
@@ -245,7 +280,7 @@ public class WebCamCapture
         if (cameraCaptureSession ==  null)
             throw new RuntimeException("failed to create webcam capture session");
         else
-            RobotLog.i("Webcam capture session started");
+            RobotLog.v(TAG, "Webcam capture session started");
     }
 
     private void stopCamera()
@@ -280,5 +315,20 @@ public class WebCamCapture
         }
 
         return false;
+    }
+
+    /**
+     * Returns a CameraName object for phone internal camera. Phone camera not currently supported
+     * by the FTC SDK so this is hidden for now. If phone is supported via the camera classes, this
+     * would be part of genericzing this class to support both camera types. In theory, the method
+     * that opens the camera should take either USB or phone camera and the rest of the code would
+     * work with either camera. Right now, trying to open the camera with built-in camera returns a
+     * "not supported" error.
+     * @param camera Camera "direction", Front or Back.
+     * @return CameraName object to use in opening camera for capture.
+     */
+    private CameraName getBuiltInCameraName(VuforiaLocalizer.CameraDirection camera)
+    {
+        return ClassFactory.getInstance().getCameraManager().nameFromCameraDirection(camera);
     }
 }
