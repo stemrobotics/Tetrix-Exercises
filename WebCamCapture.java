@@ -77,7 +77,6 @@ public class WebCamCapture
 
     /** State regarding our interaction with the camera */
     private CameraManager           cameraManager;
-    //private WebcamName              cameraName;
     private CameraName              cameraName;
     private Camera                  camera;
     private CameraCaptureSession    cameraCaptureSession;
@@ -172,27 +171,27 @@ public class WebCamCapture
             @Override
             public void onOpened(@NonNull Camera camera)
             {
-                RobotLog.v(TAG, "camera opened");
+                RobotLog.vv(TAG, "camera opened");
             }
 
             @Override
             public void onOpenFailed(@NonNull CameraName cameraName, @NonNull Camera.OpenFailure reason)
             {
                 errorMessage = String.format( "camera open failed: %s (%s)", cameraName, reason);
-                RobotLog.e(TAG, errorMessage);
+                RobotLog.ee(TAG, errorMessage);
             }
 
             @Override
             public void onClosed(@NonNull Camera camera)
             {
-                RobotLog.v(TAG, "camera closed");
+                RobotLog.vv(TAG, "camera closed");
             }
 
             @Override
             public void onError(@NonNull Camera camera, Camera.Error cameraError)
             {
                 errorMessage = String.format( "camera error: %s (%s)", cameraName, cameraError);
-                RobotLog.e(TAG, errorMessage);
+                RobotLog.ee(TAG, errorMessage);
             }
         }));
 
@@ -251,7 +250,7 @@ public class WebCamCapture
                                              {
                                                  @Override public void onCaptureSequenceCompleted(@NonNull CameraCaptureSession session, CameraCaptureSequenceId cameraCaptureSequenceId, long lastFrameNumber)
                                                  {
-                                                     //RobotLog.ii(TAG, "capture sequence %s reports completed: lastFrame=%d", cameraCaptureSequenceId, lastFrameNumber);
+                                                     //RobotLog.vv(TAG, "capture sequence %s reports completed: lastFrame=%d", cameraCaptureSequenceId, lastFrameNumber);
                                                  }
                                              })
                                             );
@@ -280,7 +279,7 @@ public class WebCamCapture
         if (cameraCaptureSession ==  null)
             throw new RuntimeException("failed to create webcam capture session");
         else
-            RobotLog.v(TAG, "Webcam capture session started");
+            RobotLog.vv(TAG, "Webcam capture session started");
     }
 
     private void stopCamera()
